@@ -86,9 +86,8 @@
               (display-graph graph :stream stream :width 600 :height 500)))))))
   file)
 
+#+(or)
 (let ((file
-        #+nil
-        "indometh-pk.ps"
         (make-indometh-graph-postscript-file)))
   (uiop:run-program `("ps2pdf" ,(uiop:unix-namestring file)))
   (uiop:run-program `("pdf2svg" ,(uiop:unix-namestring
