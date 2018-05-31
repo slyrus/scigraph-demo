@@ -86,14 +86,24 @@
               (display-graph graph :stream stream :width 600 :height 500)))))))
   file)
 
-#+(or)
-(let ((file
-        (make-indometh-graph-postscript-file)))
-  (uiop:run-program `("ps2pdf" ,(uiop:unix-namestring file)))
-  (uiop:run-program `("pdf2svg" ,(uiop:unix-namestring
-                                  (merge-pathnames (make-pathname :type "pdf") file))
-                                ,(uiop:unix-namestring
-                                  (merge-pathnames (make-pathname :type "svg") file)))))
+(defun make-indometh-graph-pdf-file (&optional (file "indometh-pk.pdf"))
+  (let ((graph (make-indometh-graph)))
+    (with-open-file (s file :direction :output :if-exists :supersede
+                       :element-type '(unsigned-byte 8))
+      (clim-pdf::with-output-to-pdf-stream (stream s)
+        (formatting-table (stream :x-spacing 20
+                                  :y-spacing 20)
+          (formatting-row (stream)
+            (formatting-cell (stream :align-x :center
+                                     :align-y :bottom
+                                     :min-height 110)
+              (draw-text* stream "indometh PK" 170 30
+                          :text-style (make-text-style :fix :bold :normal))))
+          (formatting-row (stream)
+            (formatting-cell (stream :align-x :left
+                                     :align-y :center)
+              (display-graph graph :stream stream :width 600 :height 500)))))))
+  file)
 
 (defun make-indometh-graph-frame ()
   (let ((graph (make-indometh-graph)))
